@@ -18,4 +18,3 @@ public class GetListController {
         return getListService.getList();
     }
 }
-

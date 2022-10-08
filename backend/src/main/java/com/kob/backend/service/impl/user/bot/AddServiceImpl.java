@@ -14,27 +14,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service //背过，总之 就是需要这么个service注解
+@Service
 public class AddServiceImpl implements AddService {
 
-    @Autowired //操作映射进数据库里，需要用autowired这个注解把mapper层的接口注入进来
+    @Autowired
     private BotMapper botMapper;
 
     @Override
     public Map<String, String> add(Map<String, String> data) {
-        UsernamePasswordAuthenticationToken authentication =
+        UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl loginUser = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
         User user = loginUser.getUser();
 
-        //上面来自info，验证是否登录，拉取登录信息
-
-        String title = data.get("title"); //get方法是传进来的参数里会自己带着的
-        // 但是这个data是从哪儿来的捏？数据库经过pojo形成的对象吗？
+        String title = data.get("title");
         String description = data.get("description");
         String content = data.get("content");
 
-        Map<String, String> map = new HashMap<>(); //自己做的api的返回信息，返回个字典
+        Map<String, String> map = new HashMap<>();
 
         if (title == null || title.length() == 0) {
             map.put("error_message", "标题不能为空");
@@ -66,7 +63,7 @@ public class AddServiceImpl implements AddService {
         }
 
         Date now = new Date();
-        Bot bot = new Bot(null,user.getId(),title,description,content,1500,now,now);
+        Bot bot = new Bot(null, user.getId(), title, description, content, 1500, now, now);
 
         botMapper.insert(bot);
         map.put("error_message", "success");
